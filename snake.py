@@ -36,6 +36,7 @@ def main():
 
     head = Point(row=10, col=10)
     head_color = (255, 0, 0)
+    direct = 'left'
     food = Point(row=random.randint(0, rows-1), col=random.randint(0, cols-1))
     food_color = (255, 255, 0)
 
