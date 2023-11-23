@@ -10,9 +10,8 @@ class Point:
         self.row = row
         self.col = col
 
-
-def copy(self):
-    return Point(row=self.row, col=self.col)
+    def copy(self):
+        return Point(row=self.row, col=self.col)
 
 
 def drawGrid(width, rows, surface):
@@ -37,18 +36,33 @@ def main():
     rows = 20
     cols = 20
     window = pygame.display.set_mode(size)
-    snake_color = (40, 40, 40)
+    snake_color = (200, 200, 230)
 
     head = Point(row=10, col=10)
     head_color = (255, 0, 0)
-    food = Point(row=random.randint(0, rows-1), col=random.randint(0, cols-1))
-    food_color = (255, 255, 0)
-
     snakes = [
         Point(row=head.row, col=head.col+1),
         Point(row=head. row, col=head.col+2),
         Point(row=head. row, col=head.col+3)
     ]
+
+    def gen_food():
+        while 1:
+            pos = Point(row=random.randint(0, rows-1),
+                        col=random.randint(0, cols-1))
+            is_coll = False
+            if head.row == pos. row and head.col == pos.col:
+                is_coll = True
+            for snake in snakes:
+                if snake.row == pos.row and snake.col == pos.col:
+                    is_coll = True
+                    break
+                if not is_coll:
+                    break
+        return pos
+
+    food = gen_food()
+    food_color = (255, 255, 0)
 
     def rect(point, color):
         cell_width = width/cols
@@ -84,11 +98,18 @@ def main():
                 elif event.key == 275 or event.key == 119:
                     direct = 'right'
 
+        # 吃东西
+        eat = (head.row == food.row and head.col == food.col)
+        # 重新产生食物
+        if eat:
+            food = gen_food()
+
         # 处理身子
         # 1.吧原来的头，插入到snakes的头上
         snakes.insert(0, head.copy())
         # 2.把snakes的最后一个删掉
-        snakes.pop()
+        if not eat:
+            snakes.pop()
 
         # 移动
         if direct == 'left':
